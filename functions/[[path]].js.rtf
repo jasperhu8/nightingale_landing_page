@@ -1,0 +1,156 @@
+{\rtf1\ansi\ansicpg936\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 export async function onRequest(context) \{\
+  const request = context.request;\
+  const url = new URL(request.url);\
+  const path = url.pathname;\
+\
+  const SUPABASE_URL =\
+    context.env.SUPABASE_URL || "https://<YOUR-PROJECT-REF>.supabase.co";\
+  const SUPABASE_PUBLISHABLE_KEY =\
+    context.env.SUPABASE_PUBLISHABLE_KEY ||\
+    "sb_publishable_P4OS7_BlhWo_wPA9zpTUzQ_6HhMUyMn";\
+\
+  if (path === "/login") \{\
+    return html(loginHtml(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY));\
+  \}\
+\
+  if (path === "/auth/callback") \{\
+    return html(callbackHtml(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY));\
+  \}\
+\
+  if (path === "/logout") \{\
+    return html(logoutHtml(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY));\
+  \}\
+\
+  return html(landingHtml());\
+\}\
+\
+function html(body) \{\
+  return new Response(body, \{\
+    headers: \{ "content-type": "text/html; charset=UTF-8" \},\
+  \});\
+\}\
+\
+function landingHtml() \{\
+  return `<!DOCTYPE html>\
+<html lang="en">\
+<head>\
+<meta charset="UTF-8" />\
+<title>Nightingale Landing Test</title>\
+<meta name="viewport" content="width=device-width, initial-scale=1" />\
+<style>\
+  body \{ margin: 0; font-family: Arial, sans-serif; background-color: #ffffff; \}\
+  .container \{ padding: 60px 40px; max-width: 900px; margin: 0 auto; text-align: center; \}\
+  .title \{ font-size: 32px; font-weight: 700; margin-bottom: 20px; \}\
+  .sub \{ font-size: 18px; line-height: 1.6; margin-bottom: 32px; color: #444; \}\
+  .btn \{ padding: 12px 20px; margin-right: 12px; border-radius: 6px; border: 1px solid #333; background-color: #fff; cursor: pointer; font-size: 14px; \}\
+</style>\
+</head>\
+<body>\
+\
+<div class="container">\
+  <h1 class="title">Clinical conversations, warm and rapid service empowered by AI.</h1>\
+  <p class="sub">\
+    Nightingale transforms real patient\'96clinician conversations into structured, longitudinal\
+    clinical memory\'97delivering clarity for clinicians, continuity for patients, and insights for teams.\
+  </p>\
+\
+  <button class="btn" onclick="location.href='/login'">Login</button>\
+  <button class="btn" onclick="location.href='https://provider.ntngale.com'">Clinician Journey</button>\
+  <button class="btn" onclick="location.href='https://patient.ntngale.com'">Patient Journey</button>\
+  <button class="btn" onclick="alert('Go to Administrator Journey')">Administrator Journey</button>\
+</div>\
+\
+</body>\
+</html>`;\
+\}\
+\
+function loginHtml(SUPABASE_URL, SUPABASE_KEY) \{\
+  return `<!doctype html>\
+<html>\
+<head>\
+  <meta charset="utf-8"/>\
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>\
+  <title>Login</title>\
+</head>\
+<body style="font-family:Arial;padding:40px;max-width:520px;margin:auto">\
+  <h2>Sign in</h2>\
+  <button id="google" style="padding:10px 14px;">Continue with Google</button>\
+  <p id="msg" style="color:#b00;margin-top:14px;"></p>\
+\
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\
+  <script>\
+    const supabase = window.supabase.createClient(\
+      $\{JSON.stringify(SUPABASE_URL)\},\
+      $\{JSON.stringify(SUPABASE_KEY)\}\
+    );\
+\
+    document.getElementById("google").onclick = async () => \{\
+      document.getElementById("msg").textContent = "";\
+      const redirectTo = location.origin + "/auth/callback";\
+      const \{ error \} = await supabase.auth.signInWithOAuth(\{\
+        provider: "google",\
+        options: \{ redirectTo \}\
+      \});\
+      if (error) document.getElementById("msg").textContent = error.message;\
+    \};\
+  </script>\
+\
+  <p style="margin-top:18px;"><a href="/">Back</a></p>\
+</body>\
+</html>`;\
+\}\
+\
+function callbackHtml(SUPABASE_URL, SUPABASE_KEY) \{\
+  return `<!doctype html>\
+<html>\
+<head>\
+  <meta charset="utf-8"/>\
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>\
+  <title>Auth Callback</title>\
+</head>\
+<body style="font-family:Arial;padding:40px">\
+  <p>Signing you in...</p>\
+  <p id="msg" style="color:#b00;"></p>\
+\
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\
+  <script>\
+    const supabase = window.supabase.createClient(\
+      $\{JSON.stringify(SUPABASE_URL)\},\
+      $\{JSON.stringify(SUPABASE_KEY)\}\
+    );\
+\
+    (async () => \{\
+      const \{ error \} = await supabase.auth.exchangeCodeForSession(window.location.href);\
+      if (error) \{ document.getElementById("msg").textContent = error.message; return; \}\
+      location.replace("/");\
+    \})();\
+  </script>\
+</body>\
+</html>`;\
+\}\
+\
+function logoutHtml(SUPABASE_URL, SUPABASE_KEY) \{\
+  return `<!doctype html>\
+<html><head><meta charset="utf-8"/><title>Logout</title></head>\
+<body style="font-family:Arial;padding:40px">\
+  <p>Logging out...</p>\
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\
+  <script>\
+    const supabase = window.supabase.createClient(\
+      $\{JSON.stringify(SUPABASE_URL)\},\
+      $\{JSON.stringify(SUPABASE_KEY)\}\
+    );\
+    (async () => \{\
+      await supabase.auth.signOut();\
+      location.replace("/");\
+    \})();\
+  </script>\
+</body></html>`;\
+\}}
