@@ -44,7 +44,7 @@ function landingHtml() {
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Nightingale - Clinical Memory</title>
+<title>Nightingale V2 - Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
