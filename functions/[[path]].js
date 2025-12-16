@@ -1,4 +1,6 @@
+// Version 3.0 - Force Update
 export async function onRequest(context) {
+  // ... 下面是其他代码
   const { request, env } = context;
   const url = new URL(request.url);
   const path = url.pathname;
